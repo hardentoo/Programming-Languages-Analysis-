@@ -1,0 +1,4 @@
+def I = \x:B. x
+def K = \x:B.\y:B.x
+def S = \x:B->B->B.\y:B->B.\z:B.(x z) (y z)
+def ACK = \ n : Nat . R (\n:Nat . suc n) ,  (\r:Nat. \m :Nat . \n :Nat . R (r (suc zero)) ,  (\rr :Nat. \ nn :Nat . r rr) , n) , n

@@ -1,0 +1,78 @@
+\documentclass[12pt,a2paper]{article} 
+
+\usepackage{lmodern}
+\usepackage [spanish] {babel} 
+\usepackage [T1]{fontenc}
+\usepackage [latin1]{inputenc}
+\usepackage{amsthm} % para poder usar newtheorem
+\usepackage{cancel} %Para poder hacer el simbolo "no es consecuencia semántica" etc.
+\usepackage{graphicx} 
+\usepackage{amsmath} %para poder usar mathbb
+\usepackage{amsfonts} %sigo intentando usar mathbb
+\usepackage{amssymb} %therefore
+\usepackage{ mathabx } %comillas
+\usepackage[latin1]{inputenc} 
+\usepackage[landscape]{geometry}
+\usepackage{proof}
+
+
+
+
+
+
+
+
+
+
+\begin{document} 
+
+
+\section*{Ejercicio 1}
+
+
+
+\infer[(T-ABS)]{ \vdash ( \ \lambda x:B\rightarrow B\rightarrow B.\lambda y:B\rightarrow B.\lambda z:B.(x \ z) \ (y \ z) \ ) : ( B \rightarrow B\rightarrow B) \rightarrow  (B \rightarrow  B) \rightarrow  B \rightarrow  B  }{
+		\infer[(T-ABS)]{x:B\rightarrow B\rightarrow B \vdash  (\lambda y:B\rightarrow B.\lambda z:B.(x \ z) \ (y \ z) \ ) : (B \rightarrow  B) \rightarrow  B \rightarrow  B  }{
+			\infer[(T-ABS)]{x:B\rightarrow B\rightarrow B,y:B\rightarrow B \vdash  (\lambda z:B.(x \ z) \ (y \ z) \ ) :  B \rightarrow  B  }{
+				\infer[(T-APP)] {x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash ( (x \ z) \ (y \ z)) : B  }{
+					\infer[(T-APP)]{x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash (x \ z) : B \rightarrow B }{ 
+						\infer[(T-VAR)] {x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash x:B\rightarrow B\rightarrow B }{} 
+						&
+						\infer[(T-VAR)]{x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash z:B}{}
+					} }
+			&
+			\infer[(T-APP)] {x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash (y \ z) : B}{ 
+			\infer[(T-VAR)]{x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash y : B \rightarrow B }{}
+			&
+			\infer[(T-VAR)]{x:B\rightarrow B\rightarrow B,y:B\rightarrow B, z:B \vdash z : B  }{}
+			}
+			}
+					} }
+
+
+
+\section*{Ejercicio 5}
+
+
+\infer[T-ASCRIBE]{ \vdash (let \ z = ( (\lambda x :  \ B . x)  \ as \  B \rightarrow B) \  in \  z)  \ as  \ B \rightarrow B :  B \rightarrow B}{
+ 			\infer[T-LET] {\vdash let \ z = ( (\lambda x :  \ B . x)  \ as \  B \rightarrow B) \  in \  z :  B \rightarrow B}{
+				\infer[T-ASCRIBE] {\vdash(\lambda x :  \ B . x)  \ as \  B \rightarrow B : B \rightarrow B }{ 
+					\infer[T-ABS]{\vdash(\lambda x :  \ B . x) :  B \rightarrow B }{
+						\infer[T-VAR] {x:B \vdash x:B }{}
+						}}
+				&
+				\infer[T-VAR]{z: B \rightarrow B \vdash z: B \rightarrow B}{} 
+				}}
+
+\section*{Ejercicio 9}
+
+\infer[T-FST]{\vdash fst (unit \ as  \ Unit ,  \ \lambda x : (B,B)  \  . snd \  x) : Unit }{
+	\infer[T-PAIR] {\vdash (unit \ as  \ Unit ,  \ \lambda x : (B,B)  \  . snd \  x) : (Unit,(B,B)\rightarrow B) }{
+		\infer[T-ASCRIBE] { \vdash unit \ as \ Unit : Unit}{ \vdash \infer[T-UNIT]{unit : Unit}{}}
+		&
+		\infer[T-ABS] { \vdash \lambda x : (B,B)  \  . snd \  x : (B,B)  \rightarrow B }{ 
+			\infer[T-SND]{ x:(B,B) \vdash snd \  x : B }{\infer[T-VAR]{x:(B,B) \vdash x:(B,B)}{}} }
+	}}
+
+
+\end{document}

@@ -1,0 +1,167 @@
+\documentclass {article} 
+
+\usepackage{lmodern}
+\usepackage [spanish] {babel} 
+\usepackage [T1]{fontenc}
+\usepackage [latin1]{inputenc}
+\usepackage{amsthm} % para poder usar newtheorem
+\usepackage{cancel} %Para poder hacer el simbolo "no es consecuencia semántica" etc.
+\usepackage{graphicx} 
+\usepackage{amsmath} %para poder usar mathbb
+\usepackage{amsfonts} %sigo intentando usar mathbb
+\usepackage{amssymb} %therefore
+\usepackage{ mathabx } %comillas
+
+\addto\captionsspanish{%
+\def\bibname{Referencias}%
+\def\tablename{Cuadro}%
+}
+
+\theoremstyle{remark}
+\newtheorem{thm}{Teorema}
+\newtheorem{lem}{Lema}[section]
+\newtheorem{cor}{Corolario}[section]
+\newtheorem{deff}{Definición}[section]
+\newtheorem{obs}{Observación}[section]
+\newtheorem{ej}{Ejercicio}[section]
+\newtheorem{ex}{Ejemplo}[section]
+\newtheorem{alg}{Algoritmo}[section]
+\usepackage[latin1]{inputenc} 
+\usepackage{listings}
+\lstset{language=Haskell, breaklines=true, basicstyle=\footnotesize} %paquete para poner código
+\usepackage{proof}
+
+
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Haskell,                 % the language of the code
+  otherkeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\color{black}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+
+\usepackage{anysize}
+\marginsize{3cm}{3cm}{3cm}{3cm}
+
+
+
+
+\begin{document}
+
+\title{TRABAJO PRÁCTICO III}
+\author{
+Meli Sebastián. Rodríguez Jeremías. \\ \\
+\small{\texttt{Análisis de Lenguajes de Programación}}
+}
+\date{\small{\today}}
+
+\maketitle
+
+
+\newpage
+
+ 
+\section*{Ejercicio 1}
+La derivación se encuentra en el archivo derivaciones.pdf .
+
+\section*{Ejercicio 2}
+
+\par La función infer retorna un valor del tipo Either String Type porque, dado un término, se dará uno de los siguientes dos casos: Que tenga un tipo válido o no. Si no puede asignarle ningún tipo a un término, devuelve un left string detallando el error; caso contrario (el término tiene un tipo válido), utiliza el constructor right.
+
+\par Si el tipo de retorno de infer fuera Type, tendríamos que agregar un tipo Error y todas las reglas para este tipo, para devolver un resultado adecuado al inferir tipos de expresiones mal tipadas; o diseñar otra forma de señalar las expresiones mal tipadas y algún detalle del error.
+
+\par El operador $$(>>=)$$ tiene este tipo:
+	
+	\begin{center}
+	$(>>=)$ :: Either String Type -> (Type -> Either String Type) -> Either String Type
+	\end{center}
+y esta definición
+\begin{center}
+$(>>=)$ v f = either Left f v
+\end{center}
+
+Donde:
+
+\begin{flushleft}
+
+either (Left  x) f g = f x\\
+either (Right x) f g = g x\\
+\end{flushleft}
+
+Entonces $(>>=)$ toma un valor del tipo Either String Type y analiza su estructura:
+\begin{itemize}
+	\item Si es de la forma Left  xs, retorna Left xs (lo mismo que recibió).
+  \item Si es de la forma Right r, retorna f r , donde f es una funcion que recive un Type y devuelve un Either String Type.
+\end{itemize}
+
+Esto nos sirve cuando queremos inferir el tipo de algun término, y precisamos inferir recursivamente el tipo de subtérminos. En este caso podemos utilizar $(>>=)$ para manejar las situaciones en que subtérminos están mal tipados (o no).
+
+
+\section*{Ejercicio 3}
+Para añadir la construcción let, utilizamos un nuevo constructor de datos en el tipo LamTerm:
+\begin{center}
+Let String LamTerm LamTerm
+\end{center}
+Modificamos el parser para capturar las expresiones let en este constructutor de LamTerm. Luego, decidimos modificar sólamente la función de conversión para interpretar un LamTer let x = e in t  como un Term que represente aplición ($\lambda$ x : T . t) e; utilizando infer para obtener T.
+El resto de las funciones no precisan ser modificadas.
+
+\section*{Ejercicio 4}
+Modificamos todas las funciones para extender al operador as.
+
+\section*{Ejercicio 5}
+Ver en derivaciones.pdf
+
+\section*{Ejercicio 6}
+Modificamos todas las funciones para extender al tipo Unit.
+
+\section*{Ejercicio 7}
+Agregamos reglas de evaluación:\\
+
+
+$$ \infer{(t_1,t_2) \rightarrow (v_1,t_2)}{t_1 \rightarrow v_1} $$
+
+$$ \infer{(v_1,t_2) \rightarrow (v_1,v_2)}{t_2 \rightarrow v_2} $$
+
+
+$$ fst \ (v_1,v_2) \rightarrow v_1 $$
+$$ snd \ (v_1,v_2) \rightarrow v_2 $$
+
+
+\section*{Ejercicio 8}
+Análogamente extendimos las funciones.
+\section*{Ejercicio 9}
+Ver en derivaciones.pdf
+\section*{Ejercicio 10}
+\section*{Ejercicio 11}
+
+\end{document}
+
+

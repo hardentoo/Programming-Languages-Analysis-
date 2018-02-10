@@ -1,0 +1,35 @@
+
+
+-- Booleanos
+def true = \ t f . t
+def false = \t f . f
+def ifthenelse = id
+
+def not      = \a . ifthenelse a false true 
+def and      = \a b. a b false
+def or       = \a b. a true b
+def booleq   = \a b. ifthenelse a b (ifthenelse b false true) 
+def xor      = \a b. not (booleq a b)
+def implica  = \a b. or (not a) b 
+
+
+-- Pares
+def pair = \x y p . p x y 
+def fst = \p . p true     
+def snd = \p . p false
+-- Combinador de Punto Fijo
+def Y = \f . (\x . f (x x)) (\x . f (x x))
+--------------------------------------------------------------------------
+-- Nueva representacion de nat ex 10.a
+
+def zero = \ x . false
+def succ = \ n . pair true n
+
+def isnot0 =  \ n . ifthenelse (fst n) true false 
+def is0    = \ n . not (isnot0 n)
+
+--def suma   = \ n m . ifthenelse (is0 n) m (succ (suma (snd n) m ))
+
+def suma = Y \ s . \ n m . ifthenelse (is0 n) m (succ (s (snd n) m ))
+
+def pred = \ n .  ifthenelse (is0 n) zero (snd n)

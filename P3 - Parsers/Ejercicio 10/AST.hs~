@@ -1,0 +1,61 @@
+module AST where
+
+-- Identificadores de Variable
+type Variable = String
+
+-- Expresiones Aritmeticas
+data IntExp = Consta Int
+	    | Var Variable
+	    | UMinus IntExp
+	    | Plus IntExp IntExp
+	    | Minus IntExp IntExp
+	    | Times IntExp IntExp
+	    | Div IntExp IntExp
+ deriving Show
+
+
+-- Expresiones Booleanas
+data BoolExp = BTrue
+	     | BFalse
+	     | Eq IntExp IntExp
+	     | Lt IntExp IntExp
+	     | Gt IntExp IntExp
+	     | And BoolExp BoolExp
+	     | Or BoolExp BoolExp
+	     | Not BoolExp
+ deriving Show
+
+-- Comandos (sentencias)
+-- Observar que solo se permiten variables de un tipo (entero)
+data Comm = Skip
+	  | Let Variable IntExp
+	  | Seq Comm Comm
+	  | Cond BoolExp Comm Comm
+	  | While BoolExp Comm
+ deriving Show
+
+-- TRANSFORMAR EN STRINGS
+
+
+showi (Consta n) = show n
+showi (Var v ) = v
+showi (UMinus n) = "-"++(showi n)
+showi (Times n1 n2) = (showi n1) ++"x"++ (showi n2)
+showi (Plus n1 n2) = (showi n1)++ "+"++ (showi n2)
+showi (Minus n1 n2) = (showi n1) ++"-"++ (showi n2)
+showi (Div n1 n2) = (showi n1) ++"/"++ (showi n2)
+
+showb BTrue = "T"
+showb BFalse = "F"
+showb (Lt n1 n2) = (showi n1) ++ "<" ++ (showi n2)
+showb (Gt n1 n2) = (showi n1) ++ ">" ++ (showi n2)
+showb (Eq n1 n2) = (showi n1) ++ "=" ++ (showi n2)
+showb (And n1 n2) = (showb n1) ++ "&" ++ (showb n2)
+showb (Or n1 n2) = (showb n1) ++ "|" ++(showb n2)
+showb (Not b) = "!"++(showb b) 
+
+showc Skip = "SKIP"
+showc (Let v i) = v ++ ":=" ++ (showi i)
+showc (Cond b c1 c2) = "IF" ++ (showb b) ++ "THEN" ++ (showc c1) ++ "ELSE" ++ (showc c2) ++ "ENDI"
+showc (While b c) = "WHILE" ++ (showb b) ++ "DO" ++ (showc c) ++ "ENDW"
+showc (Seq c1 c2) = (showc c1) ++ "\n" ++ (showc c2)

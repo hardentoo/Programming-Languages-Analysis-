@@ -1,0 +1,289 @@
+\documentclass {article} 
+
+\usepackage{lmodern}
+\usepackage [spanish] {babel} 
+\usepackage [T1]{fontenc}
+\usepackage [latin1]{inputenc}
+\usepackage{amsthm} % para poder usar newtheorem
+\usepackage{cancel} %Para poder hacer el simbolo "no es consecuencia semántica" etc.
+\usepackage{graphicx} 
+\usepackage{amsmath} %para poder usar mathbb
+\usepackage{amsfonts} %sigo intentando usar mathbb
+\usepackage{amssymb} %therefore
+\usepackage{ mathabx } %comillas
+\usepackage{ verbatim } 
+\addto\captionsspanish{%
+\def\bibname{Referencias}%
+\def\tablename{Cuadro}%
+}
+
+\theoremstyle{remark}
+\newtheorem{thm}{Teorema}
+\newtheorem{lem}{Lema}[section]
+\newtheorem{cor}{Corolario}[section]
+\newtheorem{deff}{Definición}[section]
+\newtheorem{obs}{Observación}[section]
+\newtheorem{ej}{Ejercicio}[section]
+\newtheorem{ex}{Ejemplo}[section]
+\newtheorem{alg}{Algoritmo}[section]
+\usepackage[latin1]{inputenc} 
+\usepackage{listings}
+\lstset{language=Haskell, breaklines=true, basicstyle=\footnotesize} %paquete para poner código
+\usepackage{proof}
+
+
+\usepackage{color}
+
+\definecolor{mygreen}{rgb}{0,0.6,0}
+\definecolor{mygray}{rgb}{0.5,0.5,0.5}
+\definecolor{mymauve}{rgb}{0.58,0,0.82}
+
+\lstset{ %
+  backgroundcolor=\color{white},   % choose the background color; you must add \usepackage{color} or \usepackage{xcolor}
+  basicstyle=\footnotesize,        % the size of the fonts that are used for the code
+  breakatwhitespace=false,         % sets if automatic breaks should only happen at whitespace
+  breaklines=true,                 % sets automatic line breaking
+  captionpos=b,                    % sets the caption-position to bottom
+  commentstyle=\color{mygreen},    % comment style
+  deletekeywords={...},            % if you want to delete keywords from the given language
+  escapeinside={\%*}{*)},          % if you want to add LaTeX within your code
+  extendedchars=true,              % lets you use non-ASCII characters; for 8-bits encodings only, does not work with UTF-8
+  frame=single,                    % adds a frame around the code
+  keepspaces=true,                 % keeps spaces in text, useful for keeping indentation of code (possibly needs columns=flexible)
+  keywordstyle=\color{blue},       % keyword style
+  language=Haskell,                 % the language of the code
+  otherkeywords={*,...},            % if you want to add more keywords to the set
+  numbers=left,                    % where to put the line-numbers; possible values are (none, left, right)
+  numbersep=5pt,                   % how far the line-numbers are from the code
+  numberstyle=\color{black}, % the style that is used for the line-numbers
+  rulecolor=\color{black},         % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+  showspaces=false,                % show spaces everywhere adding particular underscores; it overrides 'showstringspaces'
+  showstringspaces=false,          % underline spaces within strings only
+  showtabs=false,                  % show tabs within strings adding particular underscores
+  stepnumber=1,                    % the step between two line-numbers. If it's 1, each line will be numbered
+  stringstyle=\color{mymauve},     % string literal style
+  tabsize=2,                       % sets default tabsize to 2 spaces
+  title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
+}
+
+
+
+\usepackage{anysize}
+\marginsize{3cm}{3cm}{3cm}{3cm}
+
+
+
+
+
+
+
+
+
+
+\begin{document} 
+
+\title{TRABAJO PRÁCTICO IV }
+\author{
+Meli Sebastián. Rodríguez Jeremías. \\ \\
+\small{\texttt{ANÁLISIS DE LENGUAJES DE PROGRAMACIÓN}}
+}
+\date{\small{\today}}
+
+\maketitle
+
+\newpage 
+\section*{Ejercicio 1}
+\subsection*{Ejercicio 1.a}
+
+\par Dado el constructor de tipos State y la siguiente instancia a la clase mónada:
+\begin{verbatim}
+newtype State a = State { runState :: Env -> (a, Env) }
+
+instance Monad State where
+    return x = State (\s -> (x, s))
+    m >>= f = State (\s -> let (v, s') = runState m s in
+                           runState (f v) s')
+
+\end{verbatim}
+\par Debemos demostrar que es una instancia válida.
+
+\begin{itemize}
+	\item \textbf{Monad 1} 
+	\begin{verbatim}
+    return x >>= f
+=<def de return>
+    State (\e->(x,e)) >>= f
+=<def de >>=>
+    State (\s -> let (x',s') = runState (State (\e->(x,e))) s 
+              in  runState (f x') s')
+=<def de runstate>						
+    State (\s -> let (x',s') = (\e->(x,e)) s 
+              in  runState (f x') s')
+=< aplicación de función >
+    State (\s -> let (x',s') = (x,s) 
+              in  runState (f x') s')
+=< aplicación de let >
+    State (\s ->  runState (f x) s )
+=<*>
+    State (\s ->  runState (State p) s )
+=<def de runStateate>
+    State (\s -> p s)
+=<extensionalidad>
+    State p
+= < * >
+    f x
+    
+	(*) f x = State p 
+\end{verbatim}
+	\item \textbf{Monad 2} 
+	\begin{verbatim}
+	
+    (State h) >>= return 
+= < def de >>= y de runState >
+    State (\s -> let (x,s') = h s 
+               in   runState (return x) s' )
+= < def de return >
+    State (\s -> let (x,s') = h s 
+               in   runState (State (\e -> (x,e))) s' )
+= <def de runStateate y aplicación >
+    State (\s -> let (x,s') = h s 
+               in  (x,s') ) 
+= <extensionalidad>
+    State  (\s -> h s)
+= < extensionalidad>
+    State h
+    
+	\end {verbatim}
+	
+	\item \textbf{Monad 3} 
+	
+	\begin{verbatim}
+	
+    (State h >>= f) >>= g
+=< >>= y def de runState>
+    (State (\s -> let (x,s') = h s in   runState (f x) s' ) ) >>= g
+= <*>
+    (State (\s -> let (x,s') = (a0,s0) in   runState (f x) s' ) ) >>= g
+=<aplico let>
+    (State (\s -> runState (f a0) s0 ) ) >>= g
+= <*>
+    (State (\s -> runState (State kf) s0 ) ) >>= g
+= < def de runState >
+    (State (\s -> kf s0) ) >>= g
+= < >>= y def de runState>
+    State (\e -> let (z0,z1) = (\s -> kf s0) e in runState (g z0) z1)
+= < aplico >
+    State (\e -> let (z0,z1) = kf s0 in runState (g z0) z1)
+= <*>
+    State (\e -> let (z0,z1) = (a1,s1) in runState (g z0) z1)
+= < evaluo let>
+    State (\e -> runState (g a1) s1)       
+= < evaluacion de let >     
+    State (\s ->    let (p0,p1) = (a1,s1) in runState (g p0) p1    )       
+= < * >     
+    State (\s ->    let (p0,p1) = kf s0 in runState (g p0) p1    ) 
+= < runState def >
+    State (\s -> runState ( State (\e -> let (p0,p1) = kf e in runState (g p0) p1 )  ) s0)
+=< >>= >
+    State (\s -> runState ((State kf) >>=g) s0)
+= <*>
+    State (\s -> runState (f a0 >>=g) s0)
+=<aplico let>
+    State (\s -> let (x,s') = (a0,s0) in runState (f x >>=g) s')
+=<*>
+    State (\s -> let (x,s') = h s in runState (f x >>=g) s')
+= < app> 
+    State (\s -> let (x,s') = h s in runState ( (\x'-> f x' >>=g) x) s' )
+=< >>= y def de runState>
+    State h >>= (\x -> f x >>=g)
+
+
+*) h s = (a0,s0)
+*) f a0 = (State kf) 
+*) kf s0 = (a1,s1)             
+	
+	
+\end {verbatim}
+	
+\end{itemize}
+
+\subsection*{Ejercicio 1.b}
+\par Ver en Eval1.hs
+
+\newpage
+\section* {Ejercicio 2}
+\subsection*{Ejercicio 2.a}
+\begin{verbatim}
+newtype StateError a = StateError { runStateError :: Env -> Maybe (a, Env) }
+
+instance Monad StateError where
+        return x           = StateError (\e -> Just (x,e))
+        StateError h >>= f = StateError (\e -> case (h e) of
+                                                  Nothing     -> Nothing
+                                                  Just (a,e') -> runStateError (f a) e' )
+\end{verbatim}
+
+\subsection*{Ejercicio 2.b}
+\begin{verbatim}
+instance MonadError StateError where
+        throw = StateError (\e -> Nothing)
+\end{verbatim}
+
+\subsection*{Ejercicio 2.c}
+\begin{verbatim}
+instance MonadState StateError where
+    lookfor v = StateError (\s -> Just (lookfor' v s, s))
+                where lookfor' v ((u, j):ss) | v == u = j
+                                             | v /= u = lookfor' v ss
+        -- Suponemos que no se utilizan variables no declaradas en LIS
+    update v i = StateError (\s -> Just ((), update' v i s))
+                 where update' v i [] = [(v, i)]
+                       update' v i ((u, _):ss) | v == u = (v, i):ss
+                       update' v i ((u, j):ss) | v /= u = (u, j):(update' v i ss)
+
+\end{verbatim}
+\subsection*{Ejercicio 2.d}
+
+\par Ver en Eval2.hs
+\newpage
+\section* {Ejercicio 3}
+\subsection*{Ejercicio 3.a}
+\begin{verbatim}
+newtype StateErrorTick a = StateErrorTick { runStateErrorTick :: Env -> (Maybe (a, Env),Int) }
+--Agregamos un Int para contar la cantidad de operaciones. Si se produce un error 
+--contamos las operaciones hasta el error.
+\end{verbatim}
+\subsection*{Ejercicio 3.b}
+\begin{verbatim}
+class Monad m => MonadTick m where
+        tick :: m ()
+\end{verbatim}
+\subsection*{Ejercicio 3.c}
+\begin{verbatim}
+instance MonadTick StateErrorTick where
+        tick = StateErrorTick (\e -> (Just ( () , e) , 1))
+\end{verbatim}
+\subsection*{Ejercicio 3.d}
+\begin{verbatim}
+instance MonadError StateErrorTick where
+        throw = StateErrorTick (\e -> (Nothing,0))
+\end{verbatim}
+\subsection*{Ejercicio 3.e}
+\begin{verbatim}
+instance MonadState StateErrorTick where
+    lookfor v = StateErrorTick (\s -> (Just (lookfor' v s, s),0) )
+                where lookfor' v ((u, j):ss) | v == u = j
+                                             | v /= u = lookfor' v ss
+        -- Suponemos que no se utilizan variables no declaradas en LIS
+    update v i = StateErrorTick (\s -> (Just ((), update' v i s),0))
+                 where update' v i [] = [(v, i)]
+                       update' v i ((u, _):ss) | v == u = (v, i):ss
+                       update' v i ((u, j):ss) | v /= u = (u, j):(update' v i ss)
+\end{verbatim}
+\subsection*{Ejercicio 3.f}
+
+\par Ver en Eval3.hs
+
+\end{document}
+
+

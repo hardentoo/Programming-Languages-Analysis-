@@ -1,0 +1,24 @@
+-- PEDIR AUXILIO A EUGE CON ESTO! 
+
+data M m a = Mk (m (Maybe a) ) -- ¿ esto es m aplicado a un maybe, o tiene un m y un Maybe a? Como data Tree a = (Tree a) a (Tree a)
+							   -- como distingo si son constructores de tipos aplicándose o secuencias de valores q no se aplican??
+						
+-- a :: *
+-- Maybe a :: *
+-- m :: * -> * 
+
+{- m es una mónada, entonces tengo
+
+	return :: a -> m a
+	(>>=)  :: m a -> ( a -> m b) -> m b 
+
+-}
+sacar :: M m a -> m a
+sacar (Mk e) = e
+
+instance (Monad m) => Monad (M m) where
+	return a   = Mk ( return (Just a) )    --DUDA! COMO HAGO PARA INDICAR A QUE RETURN HAGO REFERENCIA?? --
+	Mk e >>= f = Mk ( e >>= (\v  -> case  v of
+										Nothing -> Nothing
+										Just a  -> sacar (f a) ) )  
+	--e :: m (Maybe a) , f :: a -> M m b 

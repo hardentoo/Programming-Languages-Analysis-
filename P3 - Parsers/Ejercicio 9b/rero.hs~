@@ -1,0 +1,7 @@
+module AST where
+
+type Declaracion = (Tipo, Declarador) 
+data Tipo = CInt | CChar | CFloat deriving Show 
+data Declarador = D Declarador_directo | Puntero_a Declarador deriving Show
+data Declarador_directo = Ident String | Arr Declarador_directo Size deriving Show
+type Size = Int 

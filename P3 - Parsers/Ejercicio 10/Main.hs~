@@ -1,0 +1,61 @@
+module Main where
+
+import System.Environment (getArgs)
+import Parse10 (parser)
+
+-- El modulo Parser tambien exporta una funcion 
+-- 
+--   parser :: String -> Comm
+--
+-- que convierte una cadena de caracteres que representa un programa LIS en una 
+-- expresion de tipo Comm.
+
+
+-- Modificar este import para usar diferentes evaluadores
+
+---------------------------------------------------------
+
+main :: IO ()
+main = do arg:_ <- getArgs
+          run arg
+
+-- Muestra como fue parseada la entrada
+run :: [Char] -> IO ()
+run ifile = 
+    do
+    s <- readFile ifile
+    print ( parser s)
+
+-- Representación en string para controlar
+run2 :: [Char] -> IO ()
+run2 ifile = 
+    do
+    s <- readFile ifile
+    print ( showc (parser s)) 
+----------------------------------------------------------
+
+-- TRANSFORMAR EN STRINGS
+
+
+showi (Consta n) = show n
+showi (Var v ) = v
+showi (UMinus n) = "-"++(showi n)
+showi (Times n1 n2) = (showi n1) ++"x"++ (showi n2)
+showi (Plus n1 n2) = (showi n1)++ "+"++ (showi n2)
+showi (Minus n1 n2) = (showi n1) ++"-"++ (showi n2)
+showi (Div n1 n2) = (showi n1) ++"/"++ (showi n2)
+
+showb BTrue = "T"
+showb BFalse = "F"
+showb (Lt n1 n2) = (showi n1) ++ "<" ++ (showi n2)
+showb (Gt n1 n2) = (showi n1) ++ ">" ++ (showi n2)
+showb (Eq n1 n2) = (showi n1) ++ "=" ++ (showi n2)
+showb (And n1 n2) = (showb n1) ++ "&" ++ (showb n2)
+showb (Or n1 n2) = (showb n1) ++ "|" ++(showb n2)
+showb (Not b) = "!"++(showb b) 
+
+showc Skip = "SKIP"
+showc (Let v i) = v ++ ":=" ++ (showi i)
+showc (Cond b c1 c2) = "IF" ++ (showb b) ++ "THEN" ++ (showc c1) ++ "ELSE" ++ (showc c2) ++ "ENDI"
+showc (While b c) = "WHILE" ++ (showb b) ++ "DO" ++ (showc c) ++ "ENDW"
+showc (Seq c1 c2) = (showc c1) ++ " ; " ++ (showc c2)

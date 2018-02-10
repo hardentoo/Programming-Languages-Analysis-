@@ -1,0 +1,10 @@
+def not = \x . x false true
+def minus = \x y . y pred x
+def mayor = \x y . not (is0 (minus x y))
+def pot2  = \x . mult x x
+
+-- sqrt' x n = ifthenelse (mayor (pot2 (suc n)) x) (n) (sqrt' x (suc n))
+
+def sqrt' =  Y (\f x n . (mayor (pot2 (suc n)) x) n (f x (suc n)))
+
+def sqrt  =  \x . sqrt' x zero

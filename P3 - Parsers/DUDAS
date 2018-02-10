@@ -1,0 +1,50 @@
+DUDAS DE PARSERS
+
+-------------------------------------------
+EJERCICIO 8 : Forma general de las recurrencias a izq y la solución genérica. El árbol que generan es distinto.. Asociado a derecha
+
+En la gramática sin desambiguar:  2 - 2 - 2
+
+
+expr -> expr - term -> expr - 2 -> ( expr - term) - 2 
+-> (expr - 2 ) - 2 -> (2 - 2) - 2 // los paréntesis ilustran el arbol
+
+
+En la gramática desambiguada:
+
+E -> T E' -> F T' E'-> F E' -> 2 E' -> 2 - T E' ->  2 - F T' E'
+-> 2 - 2 E' -> 2 (- 2 - 2) 
+
+
+O acá no hay árbol xq es concreta y no abstracta?
+en q momento pasa de ser concreta a abstracta? abstracta seria
+haskell escrito?
+
+-------------------------------------------
+
+La solución siempre va a implicar el uso de un
+parser que devuelva una función o puede implicar algo más raro?
+Alguna solución alternativa?
+Están bien los tipos de los parsers?
+Y el AST?
+
+_______________________________________________---
+
+EJERCICIO 9:
+
+¿Es importante el órden en que chequeo las cosas? ¿Cómo me doy cuenta?
+¿Primero los recursivos?
+
+Están bien los tipos del AST?
+
+_______________________________________________
+
+EJERCICIO 10:
+
+Porqué anda?
+
+Era lo mismo que el otro?
+-___
+
+--duda parcial: tenemos q ir sabiendo las funciones d parseo, nos las van a decir, o q
+-- tipo si uno no se acuerda si x funcion consume los espacios blancos o no, etc

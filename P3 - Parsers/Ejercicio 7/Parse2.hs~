@@ -1,0 +1,16 @@
+module Parse2 where
+
+import Parsing
+import AST
+
+
+--expr   :: Parser Int
+--expr   = do {t <- term;  do { char '+' ; e <- expr ; return (t+e) } (<|>) return t }
+
+--term   :: Parser Int
+--term   = do {f <- factor ; do {char '*' ; t<- term ; return (t*f) } (<|>) return f} 
+
+--factor :: Parser Int
+--factor = do {char '(' ; e <- expr ; char ')' ; return e} (<|>) digit
+
+

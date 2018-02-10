@@ -1,0 +1,48 @@
+{- a) Hacerlas en Haskell
+
+data BinTree a = Leaf | Bin a (BinTree a) (BinTree a)
+
+foldBin :: b -> (a -> b -> b -> b) -> (BinTree a) -> b
+foldBin l b Leaf        = l
+foldBin l b (Bin e i d) = b e (foldBin l b i) (foldbin l b d)
+
+isLeaf t = case t of
+        Leaf -> True
+        _    -> False
+
+mapBin f t = case t of
+        Leaf -> Leaf
+        (Bin e l r) -> Bin (f e) (mapBin f l) (mapBin f r)
+
+heightBin Leaf = 0
+heightBin (Bin e l r) = 1 + (max (heightBin l) (heightBin r) )
+
+mirrorBin Leaf = Leaf
+mirrorBin (Bin e l r) = Bin e (mirrorBin r) (mirrorBin l)
+
+        
+-}
+
+{-
+Voy a trabajar con foldbin' :: (BinTree a) -> (a -> b -> b -> b) -> b -> b
+
+foldBin' Leaf = \ f b . b
+foldBin' (Bin e l r) = \ f b . f e (l f b) (r f b)
+                   
+-}
+
+
+
+def foldBin2 = id
+def foldBin  = \ b f t . foldBin2 t f b
+
+def leaf = \ f b . b
+def bin  = \ e l r f b . f e (l f b) (r f b)
+
+def max = \ n1 n2 . ifthenelse (is0 (minus n1 n2)) n2 n1
+
+def isLeaf = \ t . foldBin2 t (\ e l r . false) true
+def heightBin = \t. foldBin2 t (\ e l r . suc (max l r) ) zero
+
+def mirrorBin = \t . foldBin2 t (\ e l r . bin e r l) leaf
+

@@ -1,0 +1,2 @@
+si no entendes nada, hola.hs es el hola mundo
+try.hs agarra una archivo (yo) y lo guarda en el otro archivo pero con las mayus cambiadas
